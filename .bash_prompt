@@ -15,7 +15,7 @@ if tput setaf 1 &> /dev/null; then
 
   # If the terminal supports at least 256 colors, write out our 256 color based set
   if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
-    USER_COLOR=$(tput setaf 27) #BLUE
+    USER_COLOR=$(tput setaf 245) #GREY
     PREPOSITION_COLOR=$(tput setaf 7) #WHITE
     DEVICE_COLOR=$(tput setaf 39) #INDIGO
     DIR_COLOR=$(tput setaf 76) #GREEN
@@ -144,17 +144,17 @@ function get_git_status() {
 
   # Iterate through all the cases and if it matches, then echo
   if [[ $DIRTY_BRANCH == 1 && $BRANCH_AHEAD == 1 && $BRANCH_BEHIND == 1 ]]; then
-    echo "⬢"
+    echo "* ↕"
   elif [[ $DIRTY_BRANCH == 1 && $BRANCH_AHEAD == 1 ]]; then
-    echo "▲"
+    echo "* ↑"
   elif [[ $DIRTY_BRANCH == 1 && $BRANCH_BEHIND == 1 ]]; then
-    echo "▼"
+    echo "* ↓"
   elif [[ $BRANCH_AHEAD == 1 && $BRANCH_BEHIND == 1 ]]; then
-    echo "⬡"
+    echo " ↕"
   elif [[ $BRANCH_AHEAD == 1 ]]; then
-    echo "△"
+    echo " ↑"
   elif [[ $BRANCH_BEHIND == 1 ]]; then
-    echo "▽"
+    echo " ↓"
   elif [[ $DIRTY_BRANCH == 1 ]]; then
     echo "*"
   fi
@@ -167,13 +167,13 @@ get_git_info () {
   # If there are any branches
   if [[ $BRANCH != "" ]]; then
     # Echo the branch
-    OUTPUT=$BRANCH
+    OUTPUT="(git:""$BRANCH"
 
     # Add on the git status
     OUTPUT=$OUTPUT"$(get_git_status)"
 
     # Echo our output
-    echo $OUTPUT
+    echo $OUTPUT")"
   fi
 }
 
@@ -185,14 +185,12 @@ get_prompt_symbol () {
 }
 
 # Define the sexy-bash-prompt
-PS1="\[${BOLD}${USER_COLOR}\]\u \
-\[$PREPOSITION_COLOR\]at \
-\[$DEVICE_COLOR\]\h \
-\[$PREPOSITION_COLOR\]in \
-\[$DIR_COLOR\]\w\
+PS1="\[${BOLD}${USER_COLOR}\]\u\
+\[$DEVICE_COLOR\]@\h\
+\[$PREPOSITION_COLOR\]:\
+\[$DIR_COLOR\]\w \
 \[$PREPOSITION_COLOR\]\
 \$( is_on_git && \
-  echo -n \" on \" && \
   echo -n \"\[$GIT_STATUS_COLOR\]\$(get_git_info)\" && \
   echo -n \"\[$NORMAL\]\")\n\
 $(get_prompt_symbol) \[$RESET\]"
