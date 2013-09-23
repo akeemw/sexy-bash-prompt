@@ -184,12 +184,26 @@ get_prompt_symbol () {
   echo "\$"
 }
 
+#SVN Information
+#http://hocuspokus.net/2009/07/add-git-and-svn-branch-to-bash-prompt/
+parse_svn_branch() {
+  parse_svn_url | sed -e 's#^'"$(parse_svn_repository_root)"'##g' | awk '{print "(svn:"$1")" }'
+}
+parse_svn_url() {
+  svn info 2>/dev/null | sed -ne 's#^URL: ##p'
+}
+parse_svn_repository_root() {
+  svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p'
+}
+
 # Define the sexy-bash-prompt
 PS1="\[${BOLD}${USER_COLOR}\]\u\
 \[$DEVICE_COLOR\]@\h\
 \[$PREPOSITION_COLOR\]:\
 \[$DIR_COLOR\]\w \
-\[$PREPOSITION_COLOR\]\
+\[$GIT_STATUS_COLOR\]\
+\$(parse_svn_branch)\
+\[$NORMAL\]\
 \$( is_on_git && \
   echo -n \"\[$GIT_STATUS_COLOR\]\$(get_git_info)\" && \
   echo -n \"\[$NORMAL\]\")\n\
